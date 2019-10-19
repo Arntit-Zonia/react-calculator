@@ -20,19 +20,38 @@ const btnLayout = [
 	{ id: "equals", value: "=", type: "functionality" }
 ];
 
-const Buttons = ({ setDisplayVal, setOutputVal }) => {
+const Buttons = ({ displayVal, setDisplayVal, setOutputVal }) => {
 	const handleClick = (e) => {
-		const value = e.target.innerHTML;
+		let input = e.target.textContent;
 
-		// temporary fix for bug that displayes text for all elms
-		if (value.length < 3 && value !== "AC" && value !== "=") {
-			setDisplayVal(value);
-			setOutputVal(value);
+		// temporary fix for bug that displays text for all elms
+		if (input.length < 3 && input !== "AC" && input !== "=") {
+			// doesn't allow more than one 0
+			if (
+				displayVal.length === 1 &&
+				displayVal === "0" &&
+				input === "0"
+			) {
+				input = "0";
+			}
+			if (displayVal[displayVal.length - 1] === "." && input === ".") {
+				input = "";
+			}
+			setDisplayVal(displayVal + input);
+			setOutputVal(input);
 		}
-		if (value === "AC") {
-			setDisplayVal([0]);
+		if (displayVal.length === 1 && displayVal === "0") {
+			setDisplayVal(input);
+		}
+		if (input === "X") {
+			input = "";
+			setDisplayVal(displayVal + "*");
+		}
+		if (input === "AC") {
+			setDisplayVal("0");
 			setOutputVal(null);
 		}
+		if (input === "=") setDisplayVal(eval(displayVal));
 	};
 
 	const renderLayout = btnLayout.map((button) => {
