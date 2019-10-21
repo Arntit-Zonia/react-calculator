@@ -1,57 +1,79 @@
 import React from "react";
 
 const btnLayout = [
-	{ id: "clear", value: "AC", type: "functionality" },
-	{ id: "divide", value: "/", type: "operant" },
-	{ id: "multiply", value: "X", type: "operant" },
-	{ id: "seven", value: 7, type: "number" },
-	{ id: "eight", value: 8, type: "number" },
-	{ id: "nine", value: 9, type: "number" },
-	{ id: "subtract", value: "-", type: "operant" },
-	{ id: "four", value: 4, type: "number" },
-	{ id: "five", value: 5, type: "number" },
-	{ id: "six", value: 6, type: "number" },
-	{ id: "add", value: "+", type: "operant" },
-	{ id: "one", value: 1, type: "number" },
-	{ id: "two", value: 2, type: "number" },
-	{ id: "three", value: 3, type: "number" },
-	{ id: "zero", value: 0, type: "number" },
-	{ id: "decimal", value: ".", type: "operant" },
-	{ id: "equals", value: "=", type: "functionality" }
+	{ id: "clear", value: "AC" },
+	{ id: "divide", value: "/" },
+	{ id: "multiply", value: "X" },
+	{ id: "seven", value: 7 },
+	{ id: "eight", value: 8 },
+	{ id: "nine", value: 9 },
+	{ id: "subtract", value: "-" },
+	{ id: "four", value: 4 },
+	{ id: "five", value: 5 },
+	{ id: "six", value: 6 },
+	{ id: "add", value: "+" },
+	{ id: "one", value: 1 },
+	{ id: "two", value: 2 },
+	{ id: "three", value: 3 },
+	{ id: "zero", value: 0 },
+	{ id: "decimal", value: "." },
+	{ id: "equals", value: "=" }
 ];
+
+const operands = ["/", "X", "+", "-"];
 
 const Buttons = ({ displayVal, setDisplayVal, setOutputVal }) => {
 	const handleClick = (e) => {
 		let input = e.target.textContent;
+		let last = displayVal[displayVal.length - 1];
+		const len = displayVal.length;
+		const incudes = operands.includes(input);
 
 		// temporary fix for bug that displays text for all elms
-		if (input.length < 3 && input !== "AC" && input !== "=") {
-			// doesn't allow more than one 0
-			if (
-				displayVal.length === 1 &&
-				displayVal === "0" &&
-				input === "0"
-			) {
-				input = "0";
+		if (input.length < 3) {
+			if (input !== "AC" && input !== "=") {
+				if (last === "." && input === last) {
+					input = "";
+				}
+				if (input === "X") {
+					input = "*";
+				}
+
+				setDisplayVal(displayVal + input);
 			}
-			if (displayVal[displayVal.length - 1] === "." && input === ".") {
-				input = "";
+
+			if (displayVal === "0" && input === displayVal) {
+				input = displayVal;
 			}
-			setDisplayVal(displayVal + input);
-			setOutputVal(input);
+			if (displayVal === "0" && input !== ".") {
+				setDisplayVal(input);
+			}
+			if (displayVal === "0" && incudes)
+				setDisplayVal(displayVal + input);
+
+			// if (operands.includes(last) && incudes) {
+			// 	setDisplayVal(displayVal.slice(0, -1) + input);
+			// }
+
+			if (last === "/" && incudes) {
+				setDisplayVal(displayVal.slice(0, -1) + input);
+			}
+			if (last === "*" && incudes) {
+				setDisplayVal(displayVal.slice(0, -1) + input);
+			}
+			if (last === "+" && incudes) {
+				setDisplayVal(displayVal.slice(0, -1) + input);
+			}
+			if (last === "-" && incudes) {
+				setDisplayVal(displayVal.slice(0, -1) + input);
+			}
+
+			if (input === "AC") {
+				setDisplayVal("0");
+				setOutputVal(null);
+			}
+			if (input === "=") setDisplayVal(eval(displayVal));
 		}
-		if (displayVal.length === 1 && displayVal === "0") {
-			setDisplayVal(input);
-		}
-		if (input === "X") {
-			input = "";
-			setDisplayVal(displayVal + "*");
-		}
-		if (input === "AC") {
-			setDisplayVal("0");
-			setOutputVal(null);
-		}
-		if (input === "=") setDisplayVal(eval(displayVal));
 	};
 
 	const renderLayout = btnLayout.map((button) => {
